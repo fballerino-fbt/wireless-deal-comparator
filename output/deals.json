@@ -1,0 +1,36 @@
+{
+  "date": "2026-06-05 15:06:23",
+  "deals": [
+    {
+      "carrier": "Metro",
+      "deal": "Unlimited $25/mo",
+      "price": 25,
+      "note": "Sample data"
+    },
+    {
+      "carrier": "Cricket",
+      "deal": "\n    const gpcCookie = document.cookie.includes('ck_privacy_view=ON-GPC');\n    const navigatorDNTorG",
+      "price": "Check site",
+      "note": "Live data"
+    },
+    {
+      "carrier": "Boost",
+      "deal": "Unlimited $25/mo",
+      "price": 25,
+      "note": "Ready for live scraping"
+    },
+    {
+      "carrier": "Total",
+      "deal": "Unlimited $35/mo",
+      "price": 35,
+      "note": "Ready for live scraping"
+    }
+  ],
+  "ai_pitch": "We've got an unbeatable opportunity for you, with Metro and Boost currently offering the best deal among our competitors at just $25/month for unlimited service. However, by choosing our prepaid plan, you'll not only enjoy the same network quality as the major carriers, but you'll also save 30-50% compared to their postpaid options, all without being locked into a contract - giving you the freedom and flexibility you deserve. Don't miss out on this incredible chance to revolutionize your wireless service and start saving today - sign up now and discover a smarter way to stay connected!",
+  "phone_promotions": [
+    "Metro: Free Samsung Galaxy A14 with port-in",
+    "Cricket: iPhone 11 $49.99 with new line",
+    "Boost: Free Motorola phone with switch",
+    "Total: 50% off select phones"
+  ]
+}

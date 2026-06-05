@@ -1,0 +1,5 @@
+{
+  "carriers": ["metro", "cricket", "boost", "total"],
+  "phones": ["iPhone", "Samsung", "Pixel"],
+  "sales_angle": "Save 30% vs postpaid plans. No contracts. Same network quality."
+}
