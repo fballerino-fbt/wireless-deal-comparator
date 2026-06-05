@@ -1,0 +1,33 @@
+name: Weekly Deal Scraper
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        pip install requests beautifulsoup4 groq
+    
+    - name: Run scraper
+      run: python scraper/run_scraper.py
+      env:
+        GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+    
+    - name: Upload HTML report
+      uses: actions/upload-artifact@v3
+      with:
+        name: report
+        path: output/
