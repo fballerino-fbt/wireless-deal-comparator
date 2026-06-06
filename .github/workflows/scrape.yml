@@ -1,39 +1,37 @@
- name: Weekly Deal Scraper
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+name: Weekly Deal Scraper
+
 on:
   schedule:
-    - cron: '0 9 * * 1'  # Every Monday at 9 AM UTC
-  workflow_dispatch:  # Manual trigger from GitHub UI
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
 
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-    
-    - name: Install dependencies
-      run: |
-        pip install playwright requests beautifulsoup4 groq
-        playwright install chromium
-    
-    - name: Run scraper
-      env:
-        GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-      run: |
-        cd scraper
-        python run_scraper.py
-    
-    - name: Commit and push results
-      run: |
-        git config user.name "GitHub Actions Bot"
-        git config user.email "actions@github.com"
-        git add output/ archives/ || true
-        git diff --quiet && git diff --staged --quiet || git commit -m "Auto-update wireless deals $(date +'%Y-%m-%d')"
-        git push
+      - uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install playwright requests beautifulsoup4 groq
+          playwright install chromium
+      
+      - name: Run scraper
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          cd scraper
+          python run_scraper.py
+      
+      - name: Commit and push results
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          git add output/ archives/ || true
+          git diff --quiet && git diff --staged --quiet || git commit -m "Auto-update wireless deals $(date +'%Y-%m-%d')"
+          git push
