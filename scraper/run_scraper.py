@@ -6,22 +6,32 @@ from datetime import datetime
 from playwright.sync_api import sync_playwright
 from ai_pitch import generate_ai_pitch, generate_competitive_pitch
 
-# ==================== CREATE OUTPUT FOLDER ====================
-os.makedirs("output", exist_ok=True)
-os.makedirs("archives", exist_ok=True)
+# ==================== SET CORRECT PATHS ====================
+# Go up one level from /scraper to the root directory
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+OUTPUT_DIR = os.path.join(BASE_DIR, "output")
+ARCHIVE_DIR = os.path.join(BASE_DIR, "archives")
+
+# Create folders
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+os.makedirs(ARCHIVE_DIR, exist_ok=True)
+
+print(f"📁 Saving files to: {OUTPUT_DIR}")
 
 # ==================== ARCHIVE SYSTEM ====================
 def archive_previous_data():
-    if os.path.exists("output/deals.json"):
-        archive_dir = f"archives/{datetime.now().strftime('%Y-%m-%d')}"
+    deals_json = os.path.join(OUTPUT_DIR, "deals.json")
+    if os.path.exists(deals_json):
+        archive_dir = os.path.join(ARCHIVE_DIR, datetime.now().strftime('%Y-%m-%d'))
         os.makedirs(archive_dir, exist_ok=True)
-        shutil.copy("output/deals.json", f"{archive_dir}/deals.json")
+        shutil.copy(deals_json, os.path.join(archive_dir, "deals.json"))
         print(f"📦 Archived to {archive_dir}")
-        shutil.copy("output/deals.json", "output/latest_good.json")
+        shutil.copy(deals_json, os.path.join(OUTPUT_DIR, "latest_good.json"))
 
 def load_cached_deals(carrier_name):
-    if os.path.exists("output/latest_good.json"):
-        with open("output/latest_good.json", "r") as f:
+    latest_good = os.path.join(OUTPUT_DIR, "latest_good.json")
+    if os.path.exists(latest_good):
+        with open(latest_good, "r") as f:
             cached = json.load(f)
             for deal in cached.get("deals", []):
                 if deal["carrier"] == carrier_name:
@@ -129,7 +139,7 @@ all_phone_deals = []
 for deal in deals:
     all_phone_deals.extend(deal.get('phone_deals', []))
 
-# Save data
+# Save data with correct paths
 output_data = {
     "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
     "deals": deals,
@@ -137,22 +147,23 @@ output_data = {
     "all_phone_promotions": all_phone_deals
 }
 
-with open("output/deals.json", "w") as f:
+deals_json_path = os.path.join(OUTPUT_DIR, "deals.json")
+with open(deals_json_path, "w") as f:
     json.dump(output_data, f, indent=2)
 
-# Generate HTML report (your existing HTML generation from original file goes here)
-# For brevity, using simplified HTML – but your original full HTML template works
+# Generate HTML report
 html_content = f"""<!DOCTYPE html>
 <html>
 <head>
     <title>Wireless Deals - {datetime.now().strftime('%Y-%m-%d')}</title>
     <style>
-        body {{ font-family: Arial; max-width: 1200px; margin: 0 auto; padding: 20px; background: #f0f2f5; }}
-        .container {{ background: white; border-radius: 20px; padding: 30px; }}
-        h1 {{ color: #1a73e8; }}
-        .best-deal {{ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 15px; margin: 20px 0; }}
+        body {{ font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; background: #f0f2f5; }}
+        .container {{ background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }}
+        h1 {{ color: #1a73e8; border-bottom: 3px solid #1a73e8; padding-bottom: 10px; }}
+        .best-deal {{ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 15px; margin: 20px 0; }}
         .deal {{ background: #f8f9fa; border-radius: 10px; padding: 20px; margin: 15px 0; border-left: 5px solid #1a73e8; }}
         .price {{ font-size: 2em; color: #2e7d32; font-weight: bold; }}
+        .timestamp {{ text-align: right; color: #666; margin-top: 30px; }}
     </style>
 </head>
 <body>
@@ -167,26 +178,34 @@ html_content = f"""<!DOCTYPE html>
 """
 
 for deal in deals:
+    bullets = deal.get('competitive_pitch', ['Competitive pricing', 'No contracts', 'Same network quality'])
+    bullet_html = ''.join([f'<li>{bullet}</li>' for bullet in bullets[:3]])
+    
     html_content += f"""
     <div class="deal">
         <h2>{deal['carrier']}</h2>
         <div class="price">{deal['price']}/month</div>
         <p><strong>Plan:</strong> {deal['deal']}</p>
-        <p><strong>Sales Pitch:</strong></p>
+        <p><strong>🎯 Sales Pitch to Win Business:</strong></p>
         <ul>
-            {''.join([f'<li>{bullet}</li>' for bullet in deal.get('competitive_pitch', ['Competitive pricing', 'No contracts'])])}
+            {bullet_html}
         </ul>
+        <p><small>{deal['note']}</small></p>
     </div>
     """
 
-html_content += """
+html_content += f"""
+    <div class="timestamp">
+        🔄 Updated weekly | 🤖 AI analysis powered by Groq
+    </div>
 </div>
 </body>
 </html>
 """
 
-with open("output/report.html", "w") as f:
+report_path = os.path.join(OUTPUT_DIR, "report.html")
+with open(report_path, "w") as f:
     f.write(html_content)
 
-print(f"\n✅ Success! Report saved to output/report.html")
+print(f"\n✅ Success! Report saved to {report_path}")
 print(f"📊 AI analysis complete")
