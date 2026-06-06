@@ -7,10 +7,6 @@ on:
     - cron: '0 9 * * 1'
   workflow_dispatch:
 
-permissions:
-  contents: write
-  pages: write
-
 jobs:
   scrape:
     runs-on: ubuntu-latest
@@ -34,7 +30,7 @@ jobs:
           cd scraper
           python run_scraper.py
       
-      - name: Upload to GitHub Pages
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: output/
