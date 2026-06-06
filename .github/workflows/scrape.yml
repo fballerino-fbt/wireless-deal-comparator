@@ -1,4 +1,4 @@
-name: Weekly Deal Scraper v2
+name: Weekly Deal Scraper v3
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -15,6 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -35,8 +37,8 @@ jobs:
       
       - name: Commit and push results
         run: |
-          git config user.name "GitHub Actions Bot"
-          git config user.email "actions@github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add output/ archives/ || true
           git diff --quiet && git diff --staged --quiet || git commit -m "Auto-update wireless deals $(date +'%Y-%m-%d')"
           git push
