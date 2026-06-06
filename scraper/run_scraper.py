@@ -2,9 +2,12 @@ import json
 import os
 import shutil
 import re
+import sys
+sys.path.append('.')
+from ai_pitch import generate_ai_pitch, generate_competitive_pitch
 from datetime import datetime
 from playwright.sync_api import sync_playwright
-from ai_pitch import generate_ai_pitch, generate_competitive_pitch
+#from ai_pitch import generate_ai_pitch, generate_competitive_pitch
 
 # ==================== ARCHIVE SYSTEM (Rollback ready) ====================
 def archive_previous_data():
